@@ -5,25 +5,59 @@ import "../flow/config";
 import * as fcl from "@onflow/fcl";
 import { useState, useEffect } from "react";
 
+const TEST_URLS = [
+  'https://media.giphy.com/media/wJ8QGSXasDvPy/giphy.gif',
+  'https://media.giphy.com/media/3ohzdI8r7iWMLCvTYk/giphy.gif',
+  'https://media.giphy.com/media/UTek0q3N8osh8agH4Y/giphy.gif',
+  'https://media.giphy.com/media/SJXzadwbexJEAZ9S1B/giphy.gif',
+  '',
+]
+
 export default function Home() {
 
-  const [user, setUser] = useState({loggedIn: null})
+  const [ user, setUser ] = useState({loggedIn: null});
+  const [ inputValue, setInputValue ] = useState('');
+  const [ collectiblesList, setCollectiblesList ] = useState([]);
 
   useEffect(() => {
     fcl.currentUser.subscribe(setUser),
     []
   })
 
-  const AuthedState = () => {
+  const setCollectible = async() => {
+    if (inputValue.length > 0) {
+      console.log('Collectibles url: ', inputValue);
+      setCollectiblesList([...collectiblesList, inputValue]);
+      setInputValue('');
+    } else {
+      console.log('Empty input. Please add a collectible');
+    }
+  }
+
+  const onInputChange = (event) => {
+    const { value } = event.target;
+    setInputValue(value);
+  }
+
+  const RenderAuthedState = () => {
     return (
-      <div>
-        <div>Address: {user?.addr ?? "No Address"}</div>
+      <div className={elementStyles.authedcontainer}>
+        <div>Address: {user?.addr ?? "No Address"}
+          <div className={elementStyles.collectiblesgrid}>
+            {TEST_URLS.map(url => (
+              <div className={elementStyles.collectiblesitem} key={url}> 
+                <img src={url} alt={url} />
+              </div>
+            ))}
+          </div>
+        </div>
+
         <button className={elementStyles.button} onClick={fcl.unauthenticate}>log out</button>
       </div>
     )
   }
 
-  const UnauthenticatedState = () => {
+  const RenderUnauthenticatedState = () => {
     return (
       <div>
         <button className={elementStyles.button} onClick={fcl.logIn}>Connect Wallet</button>
@@ -47,9 +81,9 @@ export default function Home() {
         Upload your Favorite Collectibles to the Flow chain
       </p>
       {user.loggedIn
-        ? <AuthedState />
-        : <UnauthenticatedState /> 
-        }
+        ? <RenderAuthedState />
+        : <RenderUnauthenticatedState /> 
+      }
     </main>
 
     </div>
