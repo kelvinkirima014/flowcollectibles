@@ -1,0 +1,22 @@
+.button {
+    background: -webkit-linear-gradient(left, #60c657, #35aee2);
+    background-size: 200% 200%;
+    animation: gradient-animation 4s ease infinite;
+    border: 0;
+    width: auto;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    color: white;
+}
+.header {
+    margin: 0 1rem;
+    font-size: 50px;
+    font-weight: bold;
+    color: white;
+}
+
+.subtext {
+    font-size: 25px;
+    color: whitesmoke;
+}
