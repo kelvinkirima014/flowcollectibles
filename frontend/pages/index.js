@@ -10,7 +10,7 @@ const TEST_URLS = [
   'https://media.giphy.com/media/3ohzdI8r7iWMLCvTYk/giphy.gif',
   'https://media.giphy.com/media/UTek0q3N8osh8agH4Y/giphy.gif',
   'https://media.giphy.com/media/SJXzadwbexJEAZ9S1B/giphy.gif',
-  'https://media.giphy.com/media/wJ8QGSXasDvPy/giphy.gif',
+  // 'https://media.giphy.com/media/wJ8QGSXasDvPy/giphy.gif',
 ]
 
 export default function Home() {
@@ -26,11 +26,11 @@ export default function Home() {
 
   useEffect(() => {
     if (user) {
-      console.log('Fetching collectibles...');
-
-      //call cadence contract here
+      
+    //call cadence contract here
 
       setCollectiblesList(TEST_URLS);
+      console.log('Setting collectibles...');
     }
   }, [user]);
 
@@ -52,7 +52,7 @@ export default function Home() {
   const RenderAuthedState = () => {
     return (
       <div className={elementStyles.authedcontainer}>
-        <form
+        <form 
           onSubmit={(event) => {
             event.preventDefault();
             setCollectible();
@@ -61,6 +61,7 @@ export default function Home() {
           <input 
             type='text' 
             placeholder='Enter a URL to your collectible' 
+            name='submitcol'
             value={inputValue}
             onChange={onInputChange}  
           />
@@ -68,8 +69,6 @@ export default function Home() {
             Submit
           </button>
         </form>
-
-
         {/* <div>Address: {user?.addr ?? "No Address"} */}
           <div className={elementStyles.collectiblesgrid}>
             {TEST_URLS.map(url => (
@@ -79,7 +78,6 @@ export default function Home() {
             ))}
           </div>
         {/* </div> */}
-        <button className={elementStyles.button} onClick={fcl.unauthenticate}>log out</button>
       </div>
     )
   }
