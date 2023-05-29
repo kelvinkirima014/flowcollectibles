@@ -18,6 +18,8 @@ export default function Home() {
   const [ user, setUser ] = useState({loggedIn: null});
   const [ inputValue, setInputValue ] = useState('');
   const [ collectiblesList, setCollectiblesList ] = useState([]);
+  const [ lastTransactionId, setLastTransactionId ] = useState();
+  const [ transactionStatus, setTransactionStatus ] = useState('N/A');
 
   useEffect(() => {
     fcl.currentUser.subscribe(setUser),
@@ -28,11 +30,43 @@ export default function Home() {
     if (user) {
       
     //call cadence contract here
+    fcl.tx(lastTransactionId).subscribe(res => {
+      setTransactionStatus(res.statusString);
+
+      //query for new chain string again if status is sealed
+      if (isSealed(res.status)) {
+        queryChain();
+      }
+    })
+
 
       setCollectiblesList(TEST_URLS);
       console.log('Setting collectibles...');
     }
   }, [user]);
+
+  const queryChain = async () => {
+    const res = await fcl.query({
+      cadence: FetchCollectibles
+    })
+    setInputValue(url/res)
+  }
+
+  const addCollectible = async (event) => {
+    event.preventDefault()
+
+    if (!inputValue.length) {
+      throw new Error('Please add a URL...')
+    }
+
+    const transactionId = await fcl.mutate({
+      cadence: AddCollectible,
+      args: (arg, t) => [arg(inputValue, t.string)]
+    })
+
+    setLastTransactionId(transactionId)
+
+  }
 
   const setCollectible = async() => {
     if (inputValue.length > 0) {
