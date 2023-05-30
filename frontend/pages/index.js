@@ -45,28 +45,28 @@ export default function Home() {
     }
   }, [user]);
 
-  const queryChain = async () => {
-    const res = await fcl.query({
-      cadence: FetchCollectibles
-    })
-    setInputValue(url/res)
-  }
+  // const queryChain = async () => {
+  //   const res = await fcl.query({
+  //     cadence: FetchCollectibles
+  //   })
+  //   setInputValue(url/res)
+  // }
 
-  const addCollectible = async (event) => {
-    event.preventDefault()
+  // const addCollectible = async (event) => {
+  //   event.preventDefault()
 
-    if (!inputValue.length) {
-      throw new Error('Please add a URL...')
-    }
+  //   if (!inputValue.length) {
+  //     throw new Error('Please add a URL...')
+  //   }
 
-    const transactionId = await fcl.mutate({
-      cadence: AddCollectible,
-      args: (arg, t) => [arg(inputValue, t.string)]
-    })
+  //   const transactionId = await fcl.mutate({
+  //     cadence: AddCollectible,
+  //     args: (arg, t) => [arg(inputValue, t.string)]
+  //   })
 
-    setLastTransactionId(transactionId)
+  //   setLastTransactionId(transactionId)
 
-  }
+  // }
 
   const saveCollectible = async() => {
     if (inputValue.length > 0) {
