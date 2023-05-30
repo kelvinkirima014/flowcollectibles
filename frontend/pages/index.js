@@ -5,12 +5,12 @@ import "../flow/config";
 import * as fcl from "@onflow/fcl";
 import { useState, useEffect } from "react";
 
-const TEST_URLS = [
-  'https://media.giphy.com/media/wJ8QGSXasDvPy/giphy.gif',
-  'https://media.giphy.com/media/3ohzdI8r7iWMLCvTYk/giphy.gif',
-  'https://media.giphy.com/media/UTek0q3N8osh8agH4Y/giphy.gif',
-  'https://media.giphy.com/media/SJXzadwbexJEAZ9S1B/giphy.gif',
-  // 'https://media.giphy.com/media/wJ8QGSXasDvPy/giphy.gif',
+const TEST_COLLECTIBLES = [
+  'https://apod.nasa.gov/apod/image/2305/M27_Cosgrove_2717.jpg',
+  'https://apod.nasa.gov/apod/image/2305/SeaBlueSky_Horalek_960.jpg',
+  'https://apod.nasa.gov/apod/image/2305/virgoCL2048.jpg',
+  'https://apod.nasa.gov/apod/image/1601/2013US10_151221_1200Chambo.jpg',
+  // 'https://apod.nasa.gov/apod/image/2005/LDN1471_HubbleSchmidt_1024.jpg',
 ]
 
 export default function Home() {
@@ -30,17 +30,17 @@ export default function Home() {
     if (user) {
       
     //call cadence contract here
-    fcl.tx(lastTransactionId).subscribe(res => {
-      setTransactionStatus(res.statusString);
+    // fcl.tx(lastTransactionId).subscribe(res => {
+    //   setTransactionStatus(res.statusString);
 
-      //query for new chain string again if status is sealed
-      if (isSealed(res.status)) {
-        queryChain();
-      }
-    })
+    //   //query for new chain string again if status is sealed
+    //   if (isSealed(res.status)) {
+    //     queryChain();
+    //   }
+    // })
 
 
-      setCollectiblesList(TEST_URLS);
+      setCollectiblesList(TEST_COLLECTIBLES);
       console.log('Setting collectibles...');
     }
   }, [user]);
@@ -68,7 +68,7 @@ export default function Home() {
 
   }
 
-  const setCollectible = async() => {
+  const saveCollectible = async() => {
     if (inputValue.length > 0) {
       console.log('Collectibles url: ', inputValue);
       setCollectiblesList([...collectiblesList, inputValue]);
@@ -89,7 +89,7 @@ export default function Home() {
         <form 
           onSubmit={(event) => {
             event.preventDefault();
-            setCollectible();
+            saveCollectible();
           }}
         >
           <input 
@@ -103,15 +103,14 @@ export default function Home() {
             Submit
           </button>
         </form>
-        {/* <div>Address: {user?.addr ?? "No Address"} */}
           <div className={elementStyles.collectiblesgrid}>
-            {TEST_URLS.map(url => (
+            {/* Map through collectiblesList instead of TEST_COLLECTIBLES */}
+            {collectiblesList.map(url => (
               <div className={elementStyles.collectiblesitem} key={url}> 
                 <img src={url} alt={url} />
               </div>
             ))}
           </div>
-        {/* </div> */}
       </div>
     )
   }
