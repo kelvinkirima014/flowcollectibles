@@ -1,8 +1,6 @@
 import CollectiblesContract from "../contracts/Collectibles.cdc"
-//To interact with the Collection, 
-//you can create transactions for minting Collectibles and scripts for viewing the Collectibles. 
-//For example, here's a transaction to mint a new Collectible:
 
+// a transaction to mint a new Collectible:
 
 transaction(url: String) {
     let receiver: &{CollectiblesContract.CollectionPublic}
@@ -17,3 +15,7 @@ transaction(url: String) {
         self.receiver.addCollectibles(collectible: <-collectible)
     }
 }
+
+//To interact with the Collection, 
+//you can create transactions for minting Collectibles and scripts for viewing the Collectibles. 
+
