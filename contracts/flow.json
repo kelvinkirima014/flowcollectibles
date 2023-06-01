@@ -1,41 +1,51 @@
 {
 	"contracts": {
-		"NonFungibleToken": {
+		"Collectibles": "./cadence/contracts/Collectibles.cdc",
+		"CollectiblesContract": "./cadence/contracts/Collectibles.cdc",
+		"ExampleNFT": {
+			"source": "",
+			"aliases": {
+				"emulator": "f8d6e0586b0a20c7"
+			}
+		},
+		"FUSD": {
+			"source": "",
 			"aliases": {
 				"emulator": "f8d6e0586b0a20c7"
 			}
 		},
 		"FlowToken": {
+			"source": "",
 			"aliases": {
 				"emulator": "0ae53cb6e3f42a79"
 			}
 		},
 		"FungibleToken": {
+			"source": "",
 			"aliases": {
 				"emulator": "ee82856bf20e2aa6"
 			}
 		},
-		"FUSD": {
-			"aliases": {
-				"emulator": "f8d6e0586b0a20c7"
-			}
-		},
 		"MetadataViews": {
-			"aliases": {
-				"emulator": "f8d6e0586b0a20c7"
-			}
-		},
-		"ExampleNFT": {
-			"aliases": {
-				"emulator": "f8d6e0586b0a20c7"
-			}
-		},
-		"NFTStorefrontV2": {
+			"source": "",
 			"aliases": {
 				"emulator": "f8d6e0586b0a20c7"
 			}
 		},
 		"NFTStorefront": {
+			"source": "",
+			"aliases": {
+				"emulator": "f8d6e0586b0a20c7"
+			}
+		},
+		"NFTStorefrontV2": {
+			"source": "",
+			"aliases": {
+				"emulator": "f8d6e0586b0a20c7"
+			}
+		},
+		"NonFungibleToken": {
+			"source": "",
 			"aliases": {
 				"emulator": "f8d6e0586b0a20c7"
 			}
