@@ -14,3 +14,6 @@ transaction {
     }
 }
 
+//To interact with the Collection, 
+//you can create transactions for minting Collectibles and scripts for viewing the Collectibles. 
+

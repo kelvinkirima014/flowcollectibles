@@ -1,9 +1,5 @@
 pub contract CollectiblesContract {
 
-    //Declare path constants so
-    //paths don't have to be hardcoded in transactions and scripts
-
-
     pub var totalSupply: UInt64
     pub var nextID: UInt64
 

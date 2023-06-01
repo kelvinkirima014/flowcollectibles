@@ -1,8 +1,10 @@
 import { config } from "@onflow/fcl";
 
 config ({
+  "app.detail.icon": "https://i.imgur.com/ux3lYB9.png",
   "accessNode.api": "https://rest-testnet.onflow.org",
   "discovery.wallet": "https://fcl-discovery.onflow.org/testnet/authn",
+  "0xAccaddress": "process.env.NEXT_PUBLIC_CONTRACT_ADDRESS", // this auto configures `0xDeployer` to be replaced by the address in txs and scripts
 })
 
 //import { ACCESS_NODE_URLS } from "../constants/constants";
