@@ -1,8 +1,8 @@
 import CollectiblesContract from "../contracts/Collectibles.cdc"
 
-//This transaction checks if the user's account already has an NFTCollection resource in storage. 
-//If not, it creates a new NFTCollection, saves it to the /storage/NFTCollection path, 
-//and creates a public capability at /public/NFTCollection.
+//This transaction checks if the user's account already has a Collection resource in storage. 
+//If not, it creates a new Collection, saves it to the /storage/Collection path, 
+//and creates a public capability at /public/Collection.
 
 transaction {
     prepare(signer: AuthAccount) {

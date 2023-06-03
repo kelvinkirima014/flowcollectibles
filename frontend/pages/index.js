@@ -30,6 +30,8 @@ export default function Home() {
     if (user) {
       
     //call cadence contract here
+
+
     // fcl.tx(lastTransactionId).subscribe(res => {
     //   setTransactionStatus(res.statusString);
 
@@ -118,7 +120,7 @@ export default function Home() {
   const RenderUnauthenticatedState = () => {
     return (
       <div>
-        <button className={elementStyles.button} onClick={fcl.logIn}>Connect Wallet</button>
+        <button className={elementStyles.button} onClick={fcl.logIn}>Log In</button>
       </div>
     )
   }
