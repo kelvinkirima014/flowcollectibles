@@ -12,6 +12,7 @@ pub contract CollectiblesContract {
             self.url = url
         }
 
+         
     }
 
      pub resource interface CollectionPublic {

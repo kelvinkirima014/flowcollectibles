@@ -1,4 +1,7 @@
 {
+	"contracts": {
+		"CollectiblesContract": "./contracts/cadence/contracts/Collectibles.cdc"
+	},
 	"networks": {
 		"emulator": "127.0.0.1:3569",
 		"mainnet": "access.mainnet.nodes.onflow.org:9000",
