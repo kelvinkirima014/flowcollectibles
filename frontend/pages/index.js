@@ -18,38 +18,81 @@ export default function Home() {
   const [ user, setUser ] = useState({loggedIn: null});
   const [ inputValue, setInputValue ] = useState('');
   const [ collectiblesList, setCollectiblesList ] = useState([]);
-  
+  let id = 0;
 
   //keeps track of the loged in user
   useEffect(() => {
     fcl.currentUser.subscribe(setUser);
-    getCollectibles();
+    getCollectibles("0xf8d6e0586b0a20c7", id);
   }, [])
 
   useEffect(() => {
     if (user) {
-      getCollectibles();
+      getCollectibles("0xf8d6e0586b0a20c7", id);
       console.log('Fetching collectibles...');
     }
   }, [user]);
 
-  const getCollectibles = async () => {
-    const res = await fcl.query({
-      cadence: `
-      import CollectiblesContract from 0xf8d6e0586b0a20c7
 
-      pub fun main(accountAddress: Address, id: UInt64): &CollectiblesContract.Collectible? {
-          let collectionRef = getAccount(accountAddress)
-          .getCapability<&CollectiblesContract.Collection>(/public/Collection)
-          .borrow()
-          ?? panic("Could not borrow Collection reference")
-         return collectionRef.fetchCollectibles(id: id)
-     }
-      `,
-      args: (_arg, _t) => []
-    })
-    setCollectiblesList(res)
-  }
+
+  // const initializeCollection = async () => {
+
+  //     const initCollectionTransaction = await fcl.mutate({
+  //       cadence: `
+  //        import CollectiblesContract from 0xf8d6e0586b0a20c7
+          
+  //         transaction {
+  //           prepare(signer: AuthAccount) {
+  //             if signer.borrow<&CollectiblesContract.Collection>(from: /storage/Collection) == nil {
+  //               let collection <- CollectiblesContract.createCollection()
+  //               signer.save(<-collection, to: /storage/Collection)
+  //               signer.link<&CollectiblesContract.Collection>(/public/Collection, target: /storage/Collection)
+  //             }
+  //           }
+  //         }`
+  //     })
+     
+
+  //   const response = await fcl.send([
+  //     fcl.transaction(initCollectionTransaction),
+  //     fcl.proposer(fcl.currentUser().authorization),
+  //     fcl.authorizations([fcl.currentUser().authorization]),
+  //     fcl.payer(fcl.currentUser().authorization),
+  //     fcl.limit(9999),
+  //   ]);
+
+  //   const transactionId = await fcl.decode(response);
+  //   const transactionStatus = await fcl.tx(transactionId).onceSealed();
+  //   return transactionStatus;
+  // };
+
+  // //Now, you can call the initializeCollection function to send the transaction:
+
+  // initializeCollection().then((transactionStatus) => {
+  //   console.log("Transaction status:", transactionStatus);
+  // });
+
+
+    const getCollectibles = async (accountAddress, id) => {
+      const res = await fcl.query({
+        cadence: `
+        import CollectiblesContract from 0xf8d6e0586b0a20c7
+
+        pub fun main(accountAddress: Address, id: UInt64): &CollectiblesContract.Collectible? {
+            let collectionRef = getAccount(accountAddress)
+            .getCapability<&CollectiblesContract.Collection>(/public/Collection)
+            .borrow()
+            ?? panic("Could not borrow Collection reference")
+          return collectionRef.fetchCollectibles(id: id)
+      }
+        `,
+        args: (arg, t) => [
+          arg(accountAddress, t.Address),
+          arg(id, t.UInt64)
+        ]
+      })
+      setCollectiblesList(res)
+    }
 
 
   const saveCollectible = async(event) => {
@@ -67,7 +110,7 @@ export default function Home() {
 
             prepare(signer: AuthAccount) {
                 self.receiver = signer.borrow<&CollectiblesContract.Collection>(from: /storage/Collection)
-                    ?? panic("could not borrow Collection reference")
+                    ?? panic("could not borrow reference to Collection")
             }
 
             execute {

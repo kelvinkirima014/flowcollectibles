@@ -70,8 +70,3 @@ pub contract CollectiblesContract {
    
 }
 
-//Based on your provided CollectiblesContract, it seems that the Collection resource 
-//is missing the proper interface declaration. To fix the error, 
-//you should create an interface for the Collection resource and use it when borrowing the reference in the transaction.
-//First, add an interface for the Collection resource in your CollectiblesContract:
-//Finally, update the transaction code to use the CollectionPublic interface when borrowing the reference:
