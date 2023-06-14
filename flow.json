@@ -1,4 +1,11 @@
 {
+	"emulators": {
+		"default": {
+			"port": 3569,
+			"serviceAccount": "emulator-account"
+		}
+	},
+	
 	"contracts": {
 		"CollectiblesContract": "./contracts/cadence/contracts/Collectibles.cdc"
 	},
@@ -12,6 +19,17 @@
 		"emulator-account": {
 			"address": "f8d6e0586b0a20c7",
 			"key": "a694a5779a8999d040cda0bbba39d71aa09b2a99fa8f99f38f1d7f86cbf045e4"
+		},
+		"testnet-account": {
+			"address": "0x08496c58edd75c89",
+			"key": "9f5492a704af9a5e0a2b7f42a924b9c3445d9240ba55734a60ca7417927626c5"
+		}
+	},
+	"deployments": {
+		"testnet": {
+			"testnet-account": [
+				"CollectiblesContract"
+			]
 		}
 	}
 }
