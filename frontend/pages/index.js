@@ -14,7 +14,7 @@ import { useState, useEffect, useRef } from "react";
 
 import { setEnvironment } from '@onflow/flow-cadut';
 import { UInt64 } from '@onflow/types';
-import { randomInt } from 'crypto';
+
 
 (async () => {
   await setEnvironment('testnet');
