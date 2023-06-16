@@ -5,12 +5,20 @@ import "../flow/config";
 import * as fcl from "@onflow/fcl";
 import { useState, useEffect, useRef } from "react";
 
-const TEST_COLLECTIBLES = [
- 'https://apod.nasa.gov/apod/image/2305/M27_Cosgrove_2717.jpg',
- 'https://apod.nasa.gov/apod/image/2305/SeaBlueSky_Horalek_960.jpg',
- 'https://apod.nasa.gov/apod/image/2305/virgoCL2048.jpg',
- 'https://apod.nasa.gov/apod/image/1601/2013US10_151221_1200Chambo.jpg'
-]
+// const TEST_COLLECTIBLES = [
+//  'https://apod.nasa.gov/apod/image/2305/M27_Cosgrove_2717.jpg',
+//  'https://apod.nasa.gov/apod/image/2305/SeaBlueSky_Horalek_960.jpg',
+//  'https://apod.nasa.gov/apod/image/2305/virgoCL2048.jpg',
+//  'https://apod.nasa.gov/apod/image/1601/2013US10_151221_1200Chambo.jpg'
+// ]
+
+import { setEnvironment } from '@onflow/flow-cadut';
+import { UInt64 } from '@onflow/types';
+import { randomInt } from 'crypto';
+
+(async () => {
+  await setEnvironment('testnet');
+})();
 
 export default function Home() {
   const [user, setUser] = useState({loggedIn: null})
@@ -32,27 +40,20 @@ export default function Home() {
   }, [user]);
 
   const getCollectibles = async (accountAddress, id) => {
-
-     const res = await fcl.query({
-        cadence: `
-        import CollectiblesContract from 0x08496c58edd75c89
-
-        pub fun main(accountAddress: Address, id: UInt64): &CollectiblesContract.Collectible? {
+  const res = await fcl.query({
+    cadence: ` 
+         import CollectiblesContract from 0x08496c58edd75c89 
+         pub fun main(accountAddress: Address, id: UInt64): &CollectiblesContract.Collectible? {
             let collectionRef = getAccount(accountAddress)
             .getCapability<&CollectiblesContract.Collection>(/public/Collection)
             .borrow()
             ?? panic("Could not borrow Collection reference")
           return collectionRef.fetchCollectibles(id: id)
-      }
-        `,
-        args: (arg, t) => [
-          arg(accountAddress, t.Address),
-          arg(id, t.UInt64)
-        ]
-      })
-      setCollectiblesList(res)
-
-  }
+      }`,
+    args: (arg, t) => [arg(accountAddress, t.Address), arg(id, t.UInt64)],
+  });
+  setCollectiblesList(res);
+};
 
   const saveCollectible = async () => {
     if (inputRef.current.value.length > 0) {
