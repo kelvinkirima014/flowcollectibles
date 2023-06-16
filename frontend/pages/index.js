@@ -27,8 +27,10 @@ export default function Home() {
   let id = 0;
   const accountAddress = "0xf8d6e0586b0a20c7"
 
+  
   useEffect(() => {
     fcl.currentUser.subscribe(setUser)
+    createCollection();
     getCollectibles(accountAddress, id);
   }, []);
 
@@ -39,62 +41,105 @@ export default function Home() {
     }
   }, [user]);
 
-  const getCollectibles = async (accountAddress, id) => {
-  const res = await fcl.query({
-    cadence: ` 
-         import CollectiblesContract from 0x08496c58edd75c89 
-         pub fun main(accountAddress: Address, id: UInt64): &CollectiblesContract.Collectible? {
-            let collectionRef = getAccount(accountAddress)
-            .getCapability<&CollectiblesContract.Collection>(/public/Collection)
-            .borrow()
-            ?? panic("Could not borrow Collection reference")
-          return collectionRef.fetchCollectibles(id: id)
-      }`,
-    args: (arg, t) => [arg(accountAddress, t.Address), arg(id, t.UInt64)],
-  });
-  setCollectiblesList(res);
+
+  const createCollectionCode = `
+  import CollectiblesContract from 0x08496c58edd75c89
+
+  transaction {
+    prepare(signer: AuthAccount) {
+      if signer.borrow<&CollectiblesContract.Collection>(from: /storage/Collection) == nil {
+        let collection <- CollectiblesContract.createCollection()
+        signer.save(<-collection, to: /storage/Collection)
+        signer.link<&CollectiblesContract.Collection>(/public/Collection, target: /storage/Collection)
+      }
+    }
+  }
+`;
+
+const createCollection = async () => {
+  const response = await fcl.send([
+    fcl.transaction`${createCollectionCode}`,
+    fcl.proposer(fcl.currentUser),
+    fcl.authorizations([fcl.currentUser]),
+    fcl.payer(fcl.currentUser),
+    fcl.limit(9999),
+  ]);
+
+  await fcl.tx(response).onceSealed();
 };
 
-  const saveCollectible = async () => {
-    if (inputRef.current.value.length > 0) {
-      console.log("Collectible url: ", inputRef.current.value)
 
-      const transactionId = fcl.mutate({
-        cadence: `
-          import CollectiblesContract from 0x08496c58edd75c89
 
-          transaction(url: String) {
-            let receiver: &{CollectiblesContract.CollectionPublic}
+const getCollectibles = async (accountAddress, id) => {
+  const res = await fcl.query({
+    cadence: `
+      import CollectiblesContract from 0x08496c58edd75c89
 
-            prepare(signer: AuthAccount) {
-              self.receiver = signer.borrow<&CollectiblesContract.Collection>(from: /storage/Collection)
-              ?? panic("could not borrow Collection reference")
-            }
+      pub fun main(accountAddress: Address, id: UInt64): Bool {
+        let collectionRef = getAccount(accountAddress)
+          .getCapability<&CollectiblesContract.Collection>(/public/Collection)
+          .borrow()
 
-            execute {
-              let collectible <- CollectiblesContract.mintCollectibles(url: url)
-              self.receiver.addCollectibles(collectible: <-collectible)
-            }
-          }
-        `,
-        args: (arg, t) => [
-          arg(inputRef.current.value, t.String)
-        ],
-        proposer: fcl.authz,
-        payer: fcl.authz,
-        authorizations: [fcl.authz],
-        limit: 999
-      })
+        return collectionRef != nil
+      }
+    `,
+    args: (arg, t) => [
+      arg(accountAddress, t.Address),
+      arg(id, t.UInt64)
+    ]
+  })
 
-      console.log('Transaction Id: ', transactionId);
-      getCollectibles()
-      setCollectiblesList([...collectiblesList, inputRef.current.value]);
-      inputRef.current.value = '';
-    } else {
-      console.log('Empty input. Try again.');
-    }
+  if (res) {
+    setCollectiblesList(res)
+    return true
+  } else {
     return false
-  };
+  }
+}
+
+
+ const saveCollectible = async () => {
+  if (inputRef.current.value.length > 0) {
+    console.log("Collectible url: ", inputRef.current.value);
+
+    const response = await fcl.send([
+      fcl.transaction`
+        import CollectiblesContract from 0x08496c58edd75c89
+
+        transaction(url: String) {
+          let receiver: &{CollectiblesContract.CollectionPublic}
+
+          prepare(signer: AuthAccount) {
+            self.receiver = signer.borrow<&CollectiblesContract.Collection>(from: /storage/Collection)
+              ?? panic("could not borrow Collection reference")
+          }
+
+          execute {
+            let collectible <- CollectiblesContract.mintCollectibles(url: url)
+            self.receiver.addCollectibles(collectible: <-collectible)
+          }
+        }
+      `,
+      fcl.args([fcl.arg(inputRef.current.value, fcl.String)]),
+      fcl.proposer(fcl.currentUser),
+      fcl.authorizations([fcl.currentUser]),
+      fcl.payer(fcl.currentUser),
+      fcl.limit(999),
+    ]);
+
+    const transactionId = response.transactionId;
+    console.log('Transaction Id: ', transactionId);
+
+    await fcl.tx(response).onceSealed();
+
+    getCollectibles(accountAddress, id);
+    setCollectiblesList([...collectiblesList, inputRef.current.value]);
+    inputRef.current.value = '';
+  } else {
+    console.log('Empty input. Try again.');
+  }
+  return false;
+};
 
   const AuthedState = () => {
     return (
