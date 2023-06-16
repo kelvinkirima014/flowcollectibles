@@ -2,6 +2,7 @@ import CollectiblesContract from "../contracts/Collectibles.cdc"
 
 // a transaction to mint a new Collectible:
 
+
 transaction(url: String) {
     let receiver: &{CollectiblesContract.CollectionPublic}
 
