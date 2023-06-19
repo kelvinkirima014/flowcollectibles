@@ -69,22 +69,22 @@ const createCollection = async () => {
   await fcl.tx(response).onceSealed();
 };
 
+
 const getCollectibles = async (accountAddress, id) => {
   const res = await fcl.query({
     cadence: `
-      pub fun main(accountAddress: Address, id: UInt64): &CollectiblesContract.Collectible? {
-      let collectionRef = getAccount(accountAddress)
-        .getCapability<&CollectiblesContract.Collection>(/public/Collection)
-        .borrow()
-        
-      if let ref = collectionRef {
-        return ref.fetchCollectibles(id: id)
-      } else {
-        return nil
+      import CollectiblesContract from 0x08496c58edd75c89
+      pub fun main(accountAddress: Address, id: UInt64): Bool {
+        let collectionRef = getAccount(accountAddress)
+          .getCapability<&CollectiblesContract.Collection>(/public/Collection)
+          .borrow()
+        return collectionRef != nil
       }
-      }
-      `,
-       args: (arg, t) => [arg(accountAddress, t.Address), arg(id, t.UInt64)],
+    `,
+    args: (arg, t) => [
+      arg(accountAddress, t.Address),
+      arg(id, t.UInt64)
+    ]
   })
 
   if (res) {
@@ -94,6 +94,8 @@ const getCollectibles = async (accountAddress, id) => {
     return false
   }
 }
+
+
 
 
  const saveCollectible = async () => {
