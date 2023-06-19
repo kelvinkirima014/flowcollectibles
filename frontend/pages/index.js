@@ -25,11 +25,12 @@ export default function Home() {
   const inputRef = useRef();
   const [collectiblesList, setCollectiblesList] = useState([]);
   let id = 0;
-  const accountAddress = "0xf8d6e0586b0a20c7"
+  const accountAddress = "0xf8d6e0586b0a20c7";
+  
 
   
   useEffect(() => {
-    fcl.currentUser.subscribe(setUser)
+    fcl.currentUser.subscribe(setUser);
     createCollection();
     getCollectibles(accountAddress, id);
   }, []);
@@ -41,7 +42,7 @@ export default function Home() {
     }
   }, [user]);
 
-
+  
   const createCollectionCode = `
   import CollectiblesContract from 0x08496c58edd75c89
 
@@ -68,25 +69,22 @@ const createCollection = async () => {
   await fcl.tx(response).onceSealed();
 };
 
-
-
 const getCollectibles = async (accountAddress, id) => {
   const res = await fcl.query({
     cadence: `
-      import CollectiblesContract from 0x08496c58edd75c89
-
-      pub fun main(accountAddress: Address, id: UInt64): Bool {
-        let collectionRef = getAccount(accountAddress)
-          .getCapability<&CollectiblesContract.Collection>(/public/Collection)
-          .borrow()
-
-        return collectionRef != nil
+      pub fun main(accountAddress: Address, id: UInt64): &CollectiblesContract.Collectible? {
+      let collectionRef = getAccount(accountAddress)
+        .getCapability<&CollectiblesContract.Collection>(/public/Collection)
+        .borrow()
+        
+      if let ref = collectionRef {
+        return ref.fetchCollectibles(id: id)
+      } else {
+        return nil
       }
-    `,
-    args: (arg, t) => [
-      arg(accountAddress, t.Address),
-      arg(id, t.UInt64)
-    ]
+      }
+      `,
+       args: (arg, t) => [arg(accountAddress, t.Address), arg(id, t.UInt64)],
   })
 
   if (res) {
@@ -99,7 +97,7 @@ const getCollectibles = async (accountAddress, id) => {
 
 
  const saveCollectible = async () => {
-  if (inputRef.current.value.length > 0) {
+  if (inputRef.current.value > 0) {
     console.log("Collectible url: ", inputRef.current.value);
 
     const response = await fcl.send([
